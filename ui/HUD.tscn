@@ -1,10 +1,11 @@
 [gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://HUD.gd" type="Script" id=1]
+[ext_resource path="res://ui/HUD.gd" type="Script" id=1]
 [ext_resource path="res://assets/kenvector_future_thin.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://assets/player_small.png" type="Texture" id=3]
 [ext_resource path="res://assets/play_button.png" type="Texture" id=4]
 [ext_resource path="res://assets/play_button_h.png" type="Texture" id=5]
+
 
 [sub_resource type="DynamicFont" id=1]
 size = 64

@@ -1,12 +1,17 @@
 extends RigidBody2D
 
 signal shoot
+signal lives_changed
+signal dead
 
 # Bullet support
 export (PackedScene) var Bullet
 export (float) var fire_rate
 
 var can_shoot = true
+
+# Lives support, called set_lives when value changes
+var lives = 0 setget set_lives
 
 # Screenwrap support
 var screensize = Vector2()
@@ -20,14 +25,13 @@ var rotation_dir = 0
 
 # FSM support
 enum {INIT, ALIVE, INVULNERABLE, DEAD}
-var state = null
+var state = INIT
 
 
 # Defines state to start as, sets screensize, and sets fire rate
 func _ready():
-	change_state(ALIVE)
-	screensize = get_viewport().get_visible_rect().size
 	$GunTimer.wait_time = fire_rate
+	$Sprite.hide()
 
 
 # Gets input every frame
@@ -44,6 +48,9 @@ func _integrate_forces(physics_state):
 	# Screen wrapping
 	var xform = physics_state.get_transform()
 	
+	if state == INIT:
+		xform = Transform2D(0, screensize/2)
+	
 	if xform.origin.x > screensize.x:
 		xform.origin.x = 0
 	if xform.origin.x < 0:
@@ -56,17 +63,37 @@ func _integrate_forces(physics_state):
 	physics_state.set_transform(xform)
 
 
+# New game has started, button pressed from HUD in main
+func start():
+	$Sprite.show()
+	self.lives = 3
+	change_state(ALIVE)
+
+
+# Sets the appropriate number of lives and emits for HUD
+func set_lives(value):
+	lives = value
+	emit_signal('lives_changed', lives)
+
+
 # Handles state changes and behaviour
 func change_state(new_state):
 	match new_state:
 		INIT:
 			$CollisionShape2D.disabled = true
+			$Sprite.modulate.a = 0.5
 		ALIVE:
 			$CollisionShape2D.disabled = false
+			$Sprite.modulate.a = 1.0
 		INVULNERABLE:
 			$CollisionShape2D.disabled = true
+			$Sprite.modulate.a = 0.5
+			$InvulnerabilityTimer.start()
 		DEAD:
 			$CollisionShape2D.disabled = true
+			$Sprite.hide()
+			linear_velocity = Vector2()
+			emit_signal('dead')
 	state = new_state
 
 
@@ -108,3 +135,27 @@ func shoot():
 # Timer expired, can fire again
 func _on_GunTimer_timeout():
 	can_shoot = true
+
+
+# Invulnerability timer timeout, change state to alive
+func _on_InvulnerabilityTimer_timeout():
+	change_state(ALIVE)
+
+
+# Explosion animation done
+func _on_AnimationPlayer_animation_finished(anim_name):
+	$Explosion.hide()
+
+
+# Collision occured - if a rock, play explosion and subtract life
+func _on_Player_body_entered(body):
+	if body.is_in_group('rocks'):
+		body.explode()
+		$Explosion.show()
+		$Explosion/AnimationPlayer.play('explosion')
+		
+		self.lives -= 1
+		if lives <= 0:
+			change_state(DEAD)
+		else:
+			change_state(INVULNERABLE)

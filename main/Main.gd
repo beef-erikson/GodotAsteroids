@@ -1,6 +1,7 @@
 extends Node2D
 
 export (PackedScene) var Rock
+export (PackedScene) var Enemy
 
 # HUD support
 var level = 0
@@ -65,6 +66,10 @@ func new_level():
 	$HUD.show_message("Wave %s" % level)
 	for i in range(level):
 		spawn_rock(3)
+	
+	# Start timer from a random range to spawn enemy ship(s)
+	$EnemyTimer.wait_time = rand_range(5, 10)
+	$EnemyTimer.start()
 
 
 # Game over
@@ -115,3 +120,18 @@ func _on_Rock_exploded(size, radius, pos, vel):
 		var newpos = pos + dir * radius
 		var newvel = dir * vel.length() * 1.1
 		spawn_rock(size - 1, newpos, newvel)
+
+
+# Timer ends, spawn an enemy
+func _on_EnemyTimer_timeout():
+	# Instantiate enemy
+	var e = Enemy.instance()
+	add_child(e)
+	
+	# Enemy targets the player, firing the same shot the player does
+	e.target = $Player
+	e.connect('shoot', self, '_on_Player_shoot')
+	
+	# Start enemy timer again
+	$EnemyTimer.wait_time = rand_range(20, 40)
+	$EnemyTimer.start()

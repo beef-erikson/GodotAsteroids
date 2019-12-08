@@ -17,7 +17,7 @@ script = ExtResource( 1 )
 Bullet = ExtResource( 2 )
 fire_rate = 0.25
 engine_power = 500
-spin_power = 15000
+spin_power = 10000
 
 [node name="Sprite" type="Sprite" parent="."]
 rotation = 1.5708

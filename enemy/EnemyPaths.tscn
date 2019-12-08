@@ -1,11 +1,28 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [sub_resource type="Curve2D" id=1]
 _data = {
-"points": PoolVector2Array(  )
+"points": PoolVector2Array( 0, 0, 0, 0, -19, -19, -74, 65, 74, -65, 85, 58, 49, -50, -49, 50, 230, 96, -87, -1, 87, 1, 388, 132, -112, 38, 112, -38, 406, 209, 29, -68, -29, 68, 551, 259, 18, 88, -18, -88, 698, 295, -22, -47, 22, 47, 766, 243, -54, -56, 54, 56, 959, 274, -41, 116, 41, -116, 1001, 446, 0, 0, 0, 0, 1047, 511 )
+}
+
+[sub_resource type="Curve2D" id=2]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, -73, 602, 40, 44, -40, -44, 80, 533, -91, -52, 91, 52, 198, 344, -49, -90, 49, 90, 482, 371, 131, 98, -131, -98, 588, 257, 4, -104, -4, 104, 795, 127, 9, 89, -9, -89, 893, 168, -74, -149, 74, 149, 1006, 78, 0, 0, 0, 0, 1130, 94 )
+}
+
+[sub_resource type="Curve2D" id=3]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, 1005, 633, 24, -84, -24, 84, 824, 494, -145, 80, 145, -80, 519, 478, 115, -87, -115, 87, 505, 317, 161, 35, -161, -35, 508, 116, -56, -188, 56, 188, 324, 169, 52, -48, -52, 48, 181, 247, -115, -19, 115, 19, 108, 67, 0, 0, 0, 0, 149, -34 )
 }
 
 [node name="EnemyPaths" type="Node"]
 
 [node name="Path2D" type="Path2D" parent="."]
 curve = SubResource( 1 )
+
+[node name="Path2D2" type="Path2D" parent="."]
+curve = SubResource( 2 )
+
+[node name="Path2D3" type="Path2D" parent="."]
+position = Vector2( -13, -2 )
+curve = SubResource( 3 )

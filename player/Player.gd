@@ -44,13 +44,15 @@ func _integrate_forces(physics_state):
 	set_applied_force(thrust.rotated(rotation))
 	set_applied_torque(spin_power * rotation_dir)
 	
-	# Screen wrapping
+	# Screen wrapping and transform support
 	var xform = physics_state.get_transform()
 	
+	# Disable collision and center player to screen
 	if state == INIT:
 		xform = Transform2D(0, screensize/2)
 		$CollisionShape2D.call_deferred('set_disabled', true)
 	
+	# Centers player to screen once death timer expires (lets explosion animation finish)
 	if state == DEAD:
 		if $DeadTimer.is_stopped():
 			xform = Transform2D(0, screensize/2)

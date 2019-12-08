@@ -101,10 +101,11 @@ func change_state(new_state):
 			$DeadTimer.start()
 			linear_velocity = Vector2()
 			emit_signal('dead')
+			$EngineSound.stop()
 	state = new_state
 
 
-# Defines inputs, including state support
+# Defines inputs, including state support and thrust sfx
 func get_input():
 	thrust = Vector2()
 	
@@ -127,8 +128,16 @@ func get_input():
 	if Input.is_action_pressed('shoot') and can_shoot:
 		shoot()
 
+	# Engine sound
+	if Input.is_action_pressed('thrust'):
+		thrust = Vector2(engine_power, 0)
+		if not $EngineSound.playing:
+			$EngineSound.play()
+	else:
+		$EngineSound.stop()
 
-# Emit firing signal and starts gun timer, preventing further shots
+
+# Emit firing signal, sound, and starts gun timer, preventing further shots
 func shoot():
 	if state == INVULNERABLE:
 		return
@@ -136,6 +145,7 @@ func shoot():
 	# Passes bullet, muzzle position, and direction
 	emit_signal('shoot', Bullet, $Muzzle.global_position, rotation)
 	can_shoot = false
+	$LaserSound.play()
 	$GunTimer.start()
 
 

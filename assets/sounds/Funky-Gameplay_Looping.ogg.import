@@ -11,5 +11,5 @@ dest_files=[ "res://.import/Funky-Gameplay_Looping.ogg-202bedac505a84b35d4d3b1bf
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

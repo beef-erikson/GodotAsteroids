@@ -11,5 +11,5 @@ dest_files=[ "res://.import/flight_sound.ogg-ef0dc3f8bae35ff68c7feb7f100375a4.og
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

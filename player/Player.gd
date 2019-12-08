@@ -31,7 +31,6 @@ var state = INIT
 # Defines state to start as, sets screensize, and sets fire rate
 func _ready():
 	$GunTimer.wait_time = fire_rate
-	$Sprite.hide()
 
 
 # Gets input every frame
@@ -50,6 +49,11 @@ func _integrate_forces(physics_state):
 	
 	if state == INIT:
 		xform = Transform2D(0, screensize/2)
+		$CollisionShape2D.call_deferred('set_disabled', true)
+	
+	if state == DEAD:
+		if $DeadTimer.is_stopped():
+			xform = Transform2D(0, screensize/2)
 	
 	if xform.origin.x > screensize.x:
 		xform.origin.x = 0
@@ -68,7 +72,7 @@ func start():
 	$Sprite.show()
 	self.lives = 3
 	change_state(ALIVE)
-
+	
 
 # Sets the appropriate number of lives and emits for HUD
 func set_lives(value):
@@ -80,18 +84,19 @@ func set_lives(value):
 func change_state(new_state):
 	match new_state:
 		INIT:
-			$CollisionShape2D.disabled = true
+			$CollisionShape2D.call_deferred('set_disabled', true)
 			$Sprite.modulate.a = 0.5
 		ALIVE:
-			$CollisionShape2D.disabled = false
+			$CollisionShape2D.call_deferred('set_disabled', false)
 			$Sprite.modulate.a = 1.0
 		INVULNERABLE:
-			$CollisionShape2D.disabled = true
+			$CollisionShape2D.call_deferred('set_disabled', true)
 			$Sprite.modulate.a = 0.5
 			$InvulnerabilityTimer.start()
 		DEAD:
-			$CollisionShape2D.disabled = true
+			$CollisionShape2D.call_deferred('set_disabled', true)
 			$Sprite.hide()
+			$DeadTimer.start()
 			linear_velocity = Vector2()
 			emit_signal('dead')
 	state = new_state

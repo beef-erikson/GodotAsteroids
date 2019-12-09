@@ -1,19 +1,21 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://ui/HUD.gd" type="Script" id=1]
-[ext_resource path="res://assets/kenvector_future_thin.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://assets/player_small.png" type="Texture" id=3]
-[ext_resource path="res://assets/play_button.png" type="Texture" id=4]
-[ext_resource path="res://assets/play_button_h.png" type="Texture" id=5]
-
+[ext_resource path="res://assets/shield_gold.png" type="Texture" id=2]
+[ext_resource path="res://assets/glassPanel_200.png" type="Texture" id=3]
+[ext_resource path="res://assets/barHorizontal_green_mid 200.png" type="Texture" id=4]
+[ext_resource path="res://assets/kenvector_future_thin.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://assets/player_small.png" type="Texture" id=6]
+[ext_resource path="res://assets/play_button.png" type="Texture" id=7]
+[ext_resource path="res://assets/play_button_h.png" type="Texture" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 size = 64
-font_data = ExtResource( 2 )
+font_data = ExtResource( 5 )
 
 [sub_resource type="DynamicFont" id=2]
 size = 64
-font_data = ExtResource( 2 )
+font_data = ExtResource( 5 )
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource( 1 )
@@ -31,7 +33,28 @@ margin_top = 20.0
 margin_right = 1004.0
 margin_bottom = 92.0
 
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+margin_top = 21.0
+margin_right = 30.0
+margin_bottom = 51.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+
+[node name="ShieldBar" type="TextureProgress" parent="MarginContainer/HBoxContainer"]
+margin_left = 34.0
+margin_top = 23.0
+margin_right = 234.0
+margin_bottom = 49.0
+size_flags_horizontal = 2
+size_flags_vertical = 4
+value = 75.0
+texture_over = ExtResource( 3 )
+texture_progress = ExtResource( 4 )
+
 [node name="ScoreLabel" type="Label" parent="MarginContainer/HBoxContainer"]
+margin_left = 448.0
 margin_right = 858.0
 margin_bottom = 72.0
 size_flags_horizontal = 3
@@ -46,30 +69,31 @@ margin_bottom = 72.0
 [node name="L1" type="TextureRect" parent="MarginContainer/HBoxContainer/LivesCounter"]
 margin_right = 38.0
 margin_bottom = 72.0
-texture = ExtResource( 3 )
+texture = ExtResource( 6 )
 stretch_mode = 6
 
 [node name="L2" type="TextureRect" parent="MarginContainer/HBoxContainer/LivesCounter"]
 margin_left = 42.0
 margin_right = 80.0
 margin_bottom = 72.0
-texture = ExtResource( 3 )
+texture = ExtResource( 6 )
 stretch_mode = 6
 
 [node name="L3" type="TextureRect" parent="MarginContainer/HBoxContainer/LivesCounter"]
 margin_left = 84.0
 margin_right = 122.0
 margin_bottom = 72.0
-texture = ExtResource( 3 )
+texture = ExtResource( 6 )
 stretch_mode = 6
 
 [node name="MessageLabel" type="Label" parent="."]
-margin_left = 20.0
-margin_top = 20.0
-margin_right = 1004.0
-margin_bottom = 92.0
+anchor_right = 1.0
+margin_top = 80.0
+margin_bottom = 72.0
+grow_horizontal = 2
 custom_fonts/font = SubResource( 2 )
 align = 1
+valign = 1
 
 [node name="StartButton" type="TextureButton" parent="."]
 anchor_left = 0.5
@@ -80,8 +104,8 @@ margin_left = -124.5
 margin_top = -32.5
 margin_right = 124.5
 margin_bottom = 32.5
-texture_normal = ExtResource( 4 )
-texture_hover = ExtResource( 5 )
+texture_normal = ExtResource( 7 )
+texture_hover = ExtResource( 8 )
 
 [node name="MessageTimer" type="Timer" parent="."]
 wait_time = 2.0

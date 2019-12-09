@@ -3,6 +3,13 @@ extends RigidBody2D
 signal shoot
 signal lives_changed
 signal dead
+signal shield_changed
+
+# Shield support
+export (int) var max_shield
+export (float) var shield_regen
+
+var shield = 0 setget set_shield
 
 # Bullet support
 export (PackedScene) var Bullet
@@ -33,9 +40,10 @@ func _ready():
 	$GunTimer.wait_time = fire_rate
 
 
-# Gets input every frame
+# Gets input and regenerates shield every frame
 func _process(delta):
 	get_input()
+	self.shield += shield_regen * delta
 
 
 # Handles thrust, rotation, and screen wrapping
@@ -71,6 +79,7 @@ func _integrate_forces(physics_state):
 
 # New game has started, button pressed from HUD in main
 func start():
+	self.shield = max_shield
 	$Sprite.show()
 	self.lives = 3
 	change_state(ALIVE)
@@ -78,9 +87,14 @@ func start():
 
 # Sets the appropriate number of lives and emits for HUD
 func set_lives(value):
+	self.shield = max_shield
 	lives = value
 	emit_signal('lives_changed', lives)
-
+	
+	if lives <= 0:
+			change_state(DEAD)
+	else:
+		change_state(INVULNERABLE)
 
 # Handles state changes and behaviour
 func change_state(new_state):
@@ -107,6 +121,8 @@ func change_state(new_state):
 
 # Defines inputs, including state support and thrust sfx
 func get_input():
+	$Exhaust.emitting = false
+	
 	thrust = Vector2()
 	
 	# If in state dead or init, do nothing
@@ -115,6 +131,7 @@ func get_input():
 	
 	# Thrust button hit
 	if Input.is_action_pressed('thrust'):
+		$Exhaust.emitting = true
 		thrust = Vector2(engine_power, 0)
 	
 	# Rotation controls
@@ -149,6 +166,18 @@ func shoot():
 	$GunTimer.start()
 
 
+# Handles changing the shields value
+func set_shield(value):
+	if value > max_shield:
+		value = max_shield
+	
+	shield = value
+	emit_signal('shield_changed', shield/max_shield)
+	
+	if shield <= 0:
+		self.lives -= 1
+
+
 # Timer expired, can fire again
 func _on_GunTimer_timeout():
 	can_shoot = true
@@ -164,15 +193,10 @@ func _on_AnimationPlayer_animation_finished(anim_name):
 	$Explosion.hide()
 
 
-# Collision occured - if a rock, play explosion and subtract life
+# Collision occured - if a rock, play explosion and subtract shield
 func _on_Player_body_entered(body):
 	if body.is_in_group('rocks'):
 		body.explode()
 		$Explosion.show()
 		$Explosion/AnimationPlayer.play('explosion')
-		
-		self.lives -= 1
-		if lives <= 0:
-			change_state(DEAD)
-		else:
-			change_state(INVULNERABLE)
+		self.shield -= body.size * 25

@@ -19,6 +19,8 @@ func _process(delta):
 
 # Delete bullet on body enter
 func _on_EnemyBullet_body_entered(body):
+	if body.name == 'Player':
+		body.shield -= 15
 	queue_free()
 
 

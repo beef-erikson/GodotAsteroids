@@ -50,6 +50,7 @@ func shoot():
 # Multiple rapid shots at player, n number of shots with a delay
 func shoot_pulse(n, delay):
 	for i in range(n):
+		$ShootSound.play()
 		shoot()
 		yield(get_tree().create_timer(delay), 'timeout')
 
@@ -66,6 +67,7 @@ func take_damage(amount):
 
 # Enemy is dead, play explosion animation and clear enemy
 func explode():
+	$ExplodeSound.play()
 	speed = 0
 	$GunTimer.stop()
 	$CollisionShape2D.disabled = true
@@ -78,7 +80,5 @@ func explode():
 # If player runs into enemy, explode enemy
 func _on_Enemy_body_entered(body):
 	if body.name == 'Player':
-		pass
-	explode()
-
-
+		body.shield -= 50
+		explode()

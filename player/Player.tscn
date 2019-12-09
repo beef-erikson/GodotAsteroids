@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://player/Player.gd" type="Script" id=1]
 [ext_resource path="res://bullet/Bullet.tscn" type="PackedScene" id=2]
@@ -10,12 +10,39 @@
 [sub_resource type="CircleShape2D" id=1]
 radius = 30.6204
 
+[sub_resource type="Gradient" id=2]
+colors = PoolColorArray( 0.777344, 0.455475, 0, 1, 0.988281, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.0072 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=5]
+curve = SubResource( 4 )
+
+[sub_resource type="ParticlesMaterial" id=6]
+emission_shape = 2
+emission_box_extents = Vector3( 1, 5, 1 )
+flag_disable_z = true
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 400.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 8.0
+scale_curve = SubResource( 5 )
+color_ramp = SubResource( 3 )
+
 [node name="Player" type="RigidBody2D"]
 contacts_reported = 1
 contact_monitor = true
 linear_damp = 1.0
 angular_damp = 1.0
 script = ExtResource( 1 )
+max_shield = 100
+shield_regen = 5.0
 Bullet = ExtResource( 2 )
 fire_rate = 0.25
 engine_power = 500
@@ -48,10 +75,17 @@ one_shot = true
 
 [node name="LaserSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
-volume_db = -10.0
 
 [node name="EngineSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 6 )
+
+[node name="Exhaust" type="Particles2D" parent="."]
+show_behind_parent = true
+position = Vector2( -28, 0 )
+rotation = 3.14159
+amount = 25
+lifetime = 0.1
+process_material = SubResource( 6 )
 [connection signal="body_entered" from="." to="." method="_on_Player_body_entered"]
 [connection signal="dead" from="." to="." method="game_over"]
 [connection signal="timeout" from="GunTimer" to="." method="_on_GunTimer_timeout"]

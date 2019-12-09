@@ -14,6 +14,7 @@ var screensize = Vector2()
 
 # Gets screensize, passes to player, and spawns 3 rocks of size 3
 func _ready():
+	$Player.set_shield(100)
 	randomize()
 	screensize = get_viewport().get_visible_rect().size
 	$Player.screensize = screensize
@@ -45,6 +46,8 @@ func _input(event):
 
 # Starts a new game
 func new_game():
+	$Music.play()
+	
 	# Clears any old rocks
 	for rock in $Rocks.get_children():
 		rock.queue_free()
@@ -62,6 +65,7 @@ func new_game():
 
 # Starts level, increasing rocks spawned based on level
 func new_level():
+	$LevelupSound.play()
 	level += 1
 	$HUD.show_message("Wave %s" % level)
 	for i in range(level):
@@ -74,6 +78,7 @@ func new_level():
 
 # Game over
 func game_over():
+	$Music.stop()
 	playing = false
 	$HUD.game_over()
 
@@ -108,6 +113,7 @@ func _on_Player_shoot(bullet, pos, dir):
 
 # Rock has exploded; spawn smaller rocks unless rock is smallest size it can be and adds to score
 func _on_Rock_exploded(size, radius, pos, vel):
+	$ExplodeSound.play()
 	score += size * 10
 	$HUD.update_score(score)
 	
